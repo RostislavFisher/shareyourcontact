@@ -100,6 +100,9 @@ export default {
       var listOfAllContacts = this.getListOfAllContacts();
       listOfAllContacts.push({id:listOfAllContacts.length, valuesOfSocialNetworkList: this.valuesOfSocialNetworkList});
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
+
+      // update data in parent component
+      this.$emit('updateListOfAllContacts');
     },
     saveChanges(){
       var listOfAllContacts = this.getListOfAllContacts();

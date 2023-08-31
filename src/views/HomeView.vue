@@ -2,11 +2,11 @@
   <div class="home">
     <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
-        <div class="carousel-item active" v-for="contact in getListOfAllContacts()">
+        <div class="carousel-item active" v-for="contact in this.listOfPublication">
           <ContactObject :id="contact.id"></ContactObject>
         </div>
-        <div :class="getListOfAllContacts().length===0 ? 'carousel-item active' : 'carousel-item'">
-          <ContactObject :create-new="true"></ContactObject>
+        <div :class="this.listOfPublication.length===0 ? 'carousel-item active' : 'carousel-item'">
+          <ContactObject :create-new="true" @updateListOfAllContacts="updateListOfAllContacts"></ContactObject>
         </div>
 
         <!--        <div class="carousel-item">-->
@@ -38,11 +38,21 @@ export default {
     ContactObject,
     HelloWorld
   },
+  data() {
+    return {
+      listOfPublication: this.getListOfAllContacts(),
+    };
+  },
   methods:{
     getListOfAllContacts(){
+      console.log("getListOfAllContacts")
       var result = (document.cookie.match(new RegExp("listOfAllContacts" + '=([^;]+)')) || [])[1] && JSON.parse((document.cookie.match(new RegExp("listOfAllContacts" + '=([^;]+)')) || [])[1]) || [];
       console.log(result);
       return result;
+    },
+    updateListOfAllContacts(){
+      console.log("updateListOfAllContacts")
+      this.listOfPublication = this.getListOfAllContacts();
     }
   }
 
