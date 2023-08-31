@@ -103,12 +103,13 @@ export default {
     },
     saveChanges(){
       var listOfAllContacts = this.getListOfAllContacts();
-      console.log(this.valuesOfSocialNetworkList)
       listOfAllContacts[this.id]["valuesOfSocialNetworkList"]= this.valuesOfSocialNetworkList;
+      listOfAllContacts[this.id]["cardTitle"]= this.cardTitle;
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
     },
   getInformationAboutContact(){
     this.valuesOfSocialNetworkList = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["valuesOfSocialNetworkList"];
+    this.cardTitle = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["cardTitle"];
   },
   },
 }
