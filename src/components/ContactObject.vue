@@ -1,5 +1,4 @@
 <template>
-<div>
   <div v-if="createNew" class="card mx-auto">
     <button @click="addNew" class="btn btn-secondary mt-2">create new</button>
   </div>
@@ -26,7 +25,7 @@
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
         <li><a class="dropdown-item" @click="startEdit">Edit</a></li>
-        <li><a class="dropdown-item" href="#">Delete</a></li>
+        <li><a class="dropdown-item" @click="deleteContact">Delete</a></li>
       </ul>
     </div>
     <h5 class="card-title">{{ cardTitle }}</h5>
@@ -43,7 +42,6 @@
     </div>
 
   </div>
-</div>
 </template>
 
 <script>
@@ -106,14 +104,20 @@ export default {
     },
     saveChanges(){
       var listOfAllContacts = this.getListOfAllContacts();
-      listOfAllContacts[this.id]["valuesOfSocialNetworkList"]= this.valuesOfSocialNetworkList;
-      listOfAllContacts[this.id]["cardTitle"]= this.cardTitle;
+      listOfAllContacts.find(contact => contact.id === this.id)["valuesOfSocialNetworkList"]= this.valuesOfSocialNetworkList;
+      listOfAllContacts.find(contact => contact.id === this.id)["cardTitle"]= this.cardTitle;
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
     },
-  getInformationAboutContact(){
-    this.valuesOfSocialNetworkList = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["valuesOfSocialNetworkList"];
-    this.cardTitle = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["cardTitle"];
-  },
+    getInformationAboutContact(){
+      this.valuesOfSocialNetworkList = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["valuesOfSocialNetworkList"];
+      this.cardTitle = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["cardTitle"];
+    },
+    deleteContact(){
+      var listOfAllContacts = this.getListOfAllContacts();
+      listOfAllContacts = listOfAllContacts.filter(contact => contact.id !== this.id);
+      document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
+      this.$emit('updateListOfAllContacts');
+    }
   },
 }
 </script>
