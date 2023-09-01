@@ -2,17 +2,12 @@
   <div class="home">
     <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
-        <div class="carousel-item active" v-for="contact in this.listOfPublication">
+        <div v-for="(contact) in this.listOfPublication" :class="'carousel-item' + (this.listOfPublication.length > 0 &&  this.listOfPublication[0].id===contact.id ? ' active' : '')">
           <ContactObject :id="contact.id"></ContactObject>
         </div>
         <div :class="this.listOfPublication.length===0 ? 'carousel-item active' : 'carousel-item'">
           <ContactObject :create-new="true" @updateListOfAllContacts="updateListOfAllContacts"></ContactObject>
         </div>
-
-        <!--        <div class="carousel-item">-->
-<!--          <ContactObject :id="1"></ContactObject>-->
-
-<!--        </div>-->
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
 <!--        <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
