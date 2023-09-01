@@ -1,9 +1,9 @@
 <template>
 <div>
-  <div v-if="createNew" class="card">
+  <div v-if="createNew" class="card mx-auto">
     <button @click="addNew" class="btn btn-secondary mt-2">create new</button>
   </div>
-  <div v-else-if="editing" class="card">
+  <div v-else-if="editing" class="card mx-auto">
     <textarea v-model="editedText" rows="4" class="form-control"></textarea>
     <div class="input-group input-group-lg" v-for="socialNetwork in this.listOfNetworks" v-bind="socialNetwork">
       <div class="input-group-prepend">
@@ -16,7 +16,7 @@
     <button @click="saveEdit" class="btn btn-primary mt-2">Save</button>
     <button @click="cancelEdit" class="btn btn-secondary mt-2">Cancel</button>
   </div>
-  <div v-else class="card">
+  <div v-else class="card mx-auto">
 
     <div class="dropdown" align="right">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
