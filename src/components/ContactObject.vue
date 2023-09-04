@@ -41,6 +41,13 @@
       </div>
     </div>
 
+    <button @click="writeTag">Send Hello</button>
+    <div v-if="!buttonPressed">
+      <p>Listening for NFC data...</p>
+      <p v-if="nfcData">Received NFC data: {{ nfcData }}</p>
+    </div>
+
+
   </div>
 </template>
 
@@ -55,25 +62,61 @@ export default {
   },
   data() {
     return {
+      buttonPressed: false,
+      nfcData: null,
       editing: false,
       editedText: "",
       cardTitle: "Title",
       lastUpdate: "28.08.2023 5:22",
-      valuesOfSocialNetworkList: {
-
-      }
+      valuesOfSocialNetworkList: {}
     };
   },
 
   mounted() {
-    console.log(this.createNew === 0)
-    console.log(this.editing === 0)
     if (this.createNew === false && this.editing === false) {
-      console.log("create new")
       this.getInformationAboutContact();
     }
+    this.readTag()
+
   },
   methods: {
+    async readTag() {
+      if ("NDEFReader" in window) {
+        const ndef = new NDEFReader();
+        try {
+          await ndef.scan();
+          ndef.onreading = event => {
+            const decoder = new TextDecoder();
+            for (const record of event.message.records) {
+              console.log("Record type:  " + record.recordType);
+              console.log("MIME type:    " + record.mediaType);
+              console.log("=== data ===\n" + decoder.decode(record.data));
+            }
+          }
+        } catch(error) {
+          console.log(error);
+        }
+      } else {
+        console.log("Web NFC is not supported.");
+      }
+    },
+    async writeTag() {
+      if ("NDEFReader" in window) {
+        const ndef = new NDEFReader();
+        try {
+          console.log("send!");
+
+          await ndef.write("What Web Can Do Today");
+          console.log("NDEF message written!");
+        } catch(error) {
+          console.log(error);
+        }
+      } else {
+        console.log("Web NFC is not supported.");
+      }
+    },
+
+
     startEdit() {
       this.editing = true;
       this.editedText = this.cardTitle;
@@ -89,36 +132,36 @@ export default {
     createNewCard() {
 
     },
-    getListOfAllContacts(){
+    getListOfAllContacts() {
       var result = (document.cookie.match(new RegExp("listOfAllContacts" + '=([^;]+)')) || [])[1] && JSON.parse((document.cookie.match(new RegExp("listOfAllContacts" + '=([^;]+)')) || [])[1]) || [];
       console.log(result);
       return result;
     },
-    addNew(){
+    addNew() {
       var listOfAllContacts = this.getListOfAllContacts();
-      listOfAllContacts.push({id:listOfAllContacts.length, valuesOfSocialNetworkList: this.valuesOfSocialNetworkList});
+      listOfAllContacts.push({id: listOfAllContacts.length, valuesOfSocialNetworkList: this.valuesOfSocialNetworkList});
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
 
       // update data in parent component
       this.$emit('updateListOfAllContacts');
     },
-    saveChanges(){
+    saveChanges() {
       var listOfAllContacts = this.getListOfAllContacts();
-      listOfAllContacts.find(contact => contact.id === this.id)["valuesOfSocialNetworkList"]= this.valuesOfSocialNetworkList;
-      listOfAllContacts.find(contact => contact.id === this.id)["cardTitle"]= this.cardTitle;
+      listOfAllContacts.find(contact => contact.id === this.id)["valuesOfSocialNetworkList"] = this.valuesOfSocialNetworkList;
+      listOfAllContacts.find(contact => contact.id === this.id)["cardTitle"] = this.cardTitle;
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
     },
-    getInformationAboutContact(){
+    getInformationAboutContact() {
       this.valuesOfSocialNetworkList = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["valuesOfSocialNetworkList"];
       this.cardTitle = this.getListOfAllContacts().filter(contact => contact.id === this.id)[0]["cardTitle"];
     },
-    deleteContact(){
+    deleteContact() {
       var listOfAllContacts = this.getListOfAllContacts();
       listOfAllContacts = listOfAllContacts.filter(contact => contact.id !== this.id);
       document.cookie = "listOfAllContacts" + "=" + JSON.stringify(listOfAllContacts) + "; path=/";
       this.$emit('updateListOfAllContacts');
     }
-  },
+  }
 }
 </script>
 
